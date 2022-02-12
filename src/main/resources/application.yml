@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: kafka-rabbitmq-mongo-demo
+  data:
+    mongodb:
+      uri: ${MONGO_URI:mongodb://localhost:27017/busdemo?authSource=admin}
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVERS:localhost:9092}
+  rabbitmq:
+    port: ${RABBITMQ_PORT:5672}
+    host: ${RABBITMQ_HOST:localhost}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+  cloud:
+    stream:
+      default-binder: kafka
+      function:
+        definition: priceCalculator;stockMarket;
+      bindings:
+        # PRICE CALCULATOR WITH DEFAULT BINDER HERE KAFKA
+        price-calculator-out-0:
+          destination: price-calculator-topic
+        priceCalculator-in-0:
+          destination: price-calculator-topic
+        # STOCK MARKET WITH DIFFERENT BINDER RABBITMQ
+        stock-market-out-0:
+          binder: rabbit
+          destination: stock-market-topic
+        stockMarket-in-0:
+          binder: rabbit
+          destination: stock-market-topic
